@@ -76,12 +76,129 @@ function toInsert()
 {
     test.style = "display: none;";
     insert.style = "display: ;";
+    InitInsert()
 }
 
+function InitInsert()
+{
+    insertContent.innerHTML = `            <button class="insert-symptom">Добавить симптом</button>
+    <button class="insert-illnes">Добавить болезнь</button>
+    <button class="correct-illnes">Изменить болезнь</button>`;
+
+    let insertSymptomBut = document.querySelector(".insert-symptom");
+    let insertIllnesBut = document.querySelector(".insert-illnes");
+    let correctSymptomBut = document.querySelector(".correct-illnes");
+    
+    insertSymptomBut.onclick = function(){InitInsertSymptom()};
+    insertIllnesBut.onclick = function(){InitInsertIllnes(0, [])}
+}
+
+function InitInsertSymptom()
+{
+    insertContent.innerHTML = `<p>Введите название симптома</p>
+    <input class = "input-symptom" type="text">
+    <button class="apply-insert-symptom">Добавить симптом</button>`;
+
+    let inputSymptom = document.querySelector(".input-symptom");
+    let applyInserSymptom = document.querySelector(".apply-insert-symptom");
+
+    applyInserSymptom.onclick = function(){
+        symptoms.push(inputSymptom.value);
+        Nsymptoms++;
+        let newsymptom = [];
+        for(let i = 0; i < Nillnes; i++)
+        {
+            newsymptom.push(0);
+        }
+        diagnoses.push(newsymptom);
+        InitInsert();
+    }
+}
+
+//change
+function InitInsertIllnes(iterator, ansver)
+{
+    insertContent.innerHTML = `<div class="question">Эта болезнь характеризуется этим симптомом: "${symptoms[iterator]}"?</div>
+        <div class="ansver">
+            <button class="yes">Да</button>
+            <button class="no">Нет</button>
+        </div>`;
+    let buttonYes = document.querySelector(".yes");
+    let buttonNo = document.querySelector(".no");
+
+    buttonYes.onclick = function (){
+        ansver.push(1);
+        iterator++;
+
+        if(iterator < Nsymptoms) InitInsertIllnes(iterator, ansver);
+        else InsertCheck(ansver);
+    }
+
+    buttonNo.onclick = function (){
+        ansver.push(0);
+        iterator++;
+
+        if(iterator < Nsymptoms) InitInsertIllnes(iterator, ansver);
+        else InsertCheck(ansver);
+    }
+}
+
+function InsertCheck(ansver)
+{
+    for(let i = 0; i < Nillnes; i++)
+    {
+        let Nsymptoms1 = 0;
+        let Nsymptoms2 = 0;
+        let equals = 0;
+
+        for(let j = 0; j < Nsymptoms; j++)
+        {
+            Nsymptoms1 = (ansver[j] === 1) ? Nsymptoms1 + 1 : Nsymptoms1;
+            Nsymptoms2 = (diagnoses[i][j] === 1) ? Nsymptoms2 + 1 : Nsymptoms2;
+            equals = (ansver[j] === diagnoses[i][j] && diagnoses[i][j] === 1 && ansver[j] === 1) ? equals + 1 : equals;
+        }
+
+        if((Nsymptoms1 > Nsymptoms2 && Nsymptoms2 === equals) || (Nsymptoms2 > Nsymptoms1 && Nsymptoms1 === equals) || (Nsymptoms1 === Nsymptoms2 && Nsymptoms1 === equals))
+        {
+            WrongInsertError();
+            return 0;
+        }
+    }
+    CompleteInsertIllnes(ansver);
+}
+
+function WrongInsertError()
+{
+    insertContent.innerHTML = `<p>Данная болезнь не соответствует условию (возможно она является вхождением другой болезни).</p>
+    <button class = "backToInsert">Попробовать снова</button>`
+    let button1 = document.querySelector(".backToInsert");
+    button1.onclick = function(){InitInsertIllnes(0, [])};
+}
+
+function CompleteInsertIllnes(ansver)
+{
+    insertContent.innerHTML = `            <p>Введите название болезни</p>
+    <input type="text" class = "illnes-name">
+    <button class="submit-illnes">Добавить болезнь</button>`;
+
+    let inputIllnesName = document.querySelector(".illnes-name");
+    let inputSubmitButton = document.querySelector(".submit-illnes");
+
+    inputSubmitButton.onclick = function(){
+        Nillnes++;
+        illnes.push(inputIllnesName.value);
+        for(let i = 0; i < Nsymptoms; i++)
+        {
+            diagnoses[i].push(ansver[i]);
+        }
+        toInsert();
+    };
+    
+}
 
 function InitTest()
 {
-    testContent.innerHTML = `<button class = "init-test">Start test</button>`;
+    testContent.innerHTML = `<button class = "init-test">Начать тест</button>`;
     let initTestButton = document.querySelector(".init-test");
     let iterator = 0;
     let ansver = [];
@@ -95,24 +212,24 @@ function revealTestIterable(iterator, ansver)
             <button class="yes">Да</button>
             <button class="no">Нет</button>
         </div>`;
-        let buttonYes = document.querySelector(".yes");
-        let buttonNo = document.querySelector(".no");
+    let buttonYes = document.querySelector(".yes");
+    let buttonNo = document.querySelector(".no");
 
-        buttonYes.onclick = function (){
-            ansver.push(1);
-            iterator++;
-            console.log(ansver);
-            if(iterator < Nsymptoms) revealTestIterable(iterator, ansver);
-            else showAnsver(ansver);
-        }
+    buttonYes.onclick = function (){
+        ansver.push(1);
+        iterator++;
 
-        buttonNo.onclick = function (){
-            ansver.push(0);
-            iterator++;
-            console.log(ansver);
-            if(iterator < Nsymptoms) revealTestIterable(iterator, ansver);
-            else showAnsver(ansver);
-        }
+        if(iterator < Nsymptoms) revealTestIterable(iterator, ansver);
+        else showAnsver(ansver);
+    }
+
+    buttonNo.onclick = function (){
+        ansver.push(0);
+        iterator++;
+
+        if(iterator < Nsymptoms) revealTestIterable(iterator, ansver);
+        else showAnsver(ansver);
+    }
 }
 
 function showAnsver(ansver)
@@ -134,9 +251,6 @@ function showAnsver(ansver)
         }
     }
 
-    console.log(compareAnsver.join());
-    console.log(ansver.join());
-    console.log(nIlnes);
     if(nIlnes >= 0)
     {
         testContent.innerHTML = `<p style = " text-align: center">Ваше заболевание "${illnes[nIlnes]}"! <br>Поздравляем!</p>`;
@@ -144,8 +258,13 @@ function showAnsver(ansver)
     else
     {
         testContent.innerHTML = `<p style = " text-align: center">Такого заборевания нету( <br>Может хотите его описать?</p>
-            <button class="toInsertButtonAns">Заполнение базы знаний</button>`;
+            <button class="toInsertButtonAns">Заполнение базы знаний</button>
+            <button class="toTestButtonAns">Пройти тест ещё раз</button>`;
         let toInsertButtonAns = document.querySelector(".toInsertButtonAns");
         toInsertButtonAns.onclick = function () {toInsert()};
+
+        let toTestButtonAns = document.querySelector(".toTestButtonAns");
+        toTestButtonAns.onclick = function () {toTest()};
+
     }
 }

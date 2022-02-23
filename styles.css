@@ -95,7 +95,7 @@ button
 {
     display: flex;
     align-items: center;
-    justify-content: space-around;
+    justify-content: center;
 }
 
 .test-content
@@ -106,7 +106,26 @@ button
     align-items: center;
 }
 
-.test-content>*
+.test-content>*,.insert-content>*
 {
-    margin-top: 60px;
+    margin-top: 40px;
+}
+
+.insert-content
+{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.question
+{
+    text-align: center;
+    height: 40%;
+}
+
+p
+{
+    text-align: center;
+    
 }
