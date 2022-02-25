@@ -48,10 +48,10 @@ button
     background: #FFD814;
     border: 1px solid #FCD200;
     font-size: 13px;
-    height: 31px;
     padding: 0 11px;
     text-align: center;
     width: fit-content;
+    height: fit-content;
     margin-left: 1%;
     min-width: 200px;
     font-weight: 500;
@@ -59,7 +59,7 @@ button
     
 }
 
-.menue>button:hover{
+button:hover{
     background: #F7CA00;
     border-color: #F2C200;
     box-shadow: 0 2px 5px 0 rgb(213 217 217 / 50%);
